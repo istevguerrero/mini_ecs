@@ -42,15 +42,75 @@ def createContainer(containerName):
 
 def listContainers():
 
-    return 0
+    sock = createConnection()
+
+    print("Connection established on port 3000")
+
+    try:
+
+        print("Trying request...")
+
+        clientRequest = ("list").encode()
+
+        sock.sendall(clientRequest)
+
+    finally:
+
+        print("Request made succesfully")
+
+        print("Closing connection...")
+
+        sock.close()
+
+        print("Connection closed succesfully")
 
 def stopContainer(containerName):
 
-    return 0
+    sock = createConnection()
+
+    print("Connection established on port 3000")
+
+    try:
+
+        print("Trying request...")
+
+        clientRequest = ("stop" + containerName).encode()
+
+        sock.sendall(clientRequest)
+
+    finally:
+
+        print("Request made succesfully")
+
+        print("Closing connection...")
+
+        sock.close()
+
+        print("Connection closed succesfully")
 
 def removeContaienr(containerName):
 
-    return 0
+    sock = createConnection()
+
+    print("Connection established on port 3000")
+
+    try:
+
+        print("Trying request...")
+
+        clientRequest = ("remove" + containerName).encode()
+
+        sock.sendall(clientRequest)
+
+    finally:
+
+        print("Request made succesfully")
+
+        print("Closing connection...")
+
+        sock.close()
+
+        print("Connection closed succesfully")
 
 families = get_constants('AF_')
 
@@ -68,6 +128,8 @@ print('Type    :', types[sock.type])
 print('Protocol:', protocols[sock.proto])
 
 print()
+
+"""
 
 try:
 
@@ -87,3 +149,5 @@ try:
 finally:
     print('closing socket')
     sock.close()
+
+"""
