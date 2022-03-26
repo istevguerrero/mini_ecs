@@ -1,6 +1,4 @@
 import socket
-import sys
-
 
 def get_constants(prefix):
     """Create a dictionary mapping socket module
