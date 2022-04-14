@@ -1,32 +1,5 @@
 import socket
 
-def get_constants(prefix):
-    """Create a dictionary mapping socket module
-    constants to their names.
-    """
-    return {
-        getattr(socket, n): n
-        for n in dir(socket)
-        if n.startswith(prefix)
-    }
-
-families = get_constants('AF_')
-
-types = get_constants('SOCK_')
-
-protocols = get_constants('IPPROTO_')
-
-# Create a TCP/IP socket
-sock = socket.create_connection(('localhost', 3000))
-
-print('Family  :', families[sock.family])
-
-print('Type    :', types[sock.type])
-
-print('Protocol:', protocols[sock.proto])
-
-print()
-
 def createConnection():
 
     return socket.create_connection(("localhost", 3000))
@@ -75,9 +48,9 @@ def listContainers():
 
         print("Closing connection...")
 
-        sock.close()
-
         print("Connection closed succesfully")
+
+        sock.close()
 
 def stopContainer(containerName):
 
