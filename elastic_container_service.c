@@ -14,25 +14,65 @@ corren en el host interactuan con el proceso subscribe_host.
 #include<arpa/inet.h>	//inet_addr
 #include<unistd.h>	//write
 
+int listContainers(){
+
+	int list;
+
+	struct sockaddr_in server;
+
+	char petition[20], reply[50];
+
+	list = socket(AF_INET, SOCK_STREAM, 0);
+
+	if(list == -1){
+
+		printf("Could not create socket");
+
+	}
+
+	puts("Socket created");
+
+	server.sin_family = AF_INET;
+
+	server.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+	server.sin_port = htons(3001);
+
+	if(connect(list, (struct sockaddr *)&server, sizeof(server)) < 0){
+
+		perror("Connect failed. Error");
+
+		return 1;
+	}
+
+	puts("Connected");
+
+	memset(petition, 0, 20);
+
+	strcpy(petition, "list");
+
+	send(list, petition, strlen(petition), 0);
+
+	memset(reply, 0, 50);
+
+	recv(list, reply, 50, 0);
+
+	printf("Response: %s\n", reply);
+
+	close(list);
+
+}
+
+
 int main(int argc , char *argv[]) {
 	
 	int socket_desc, client_sock, c, read_size;
 
-	int received = 0;
-
 	struct sockaddr_in server, client;
 
 	char client_message[2000];
-	
-	//Create socket
-	
-    // AF_INET (IPv4 protocol) , AF_INET6 (IPv6 protocol)
 
-    // SOCK_STREAM: TCP(reliable, connection oriented)
-
-    // SOCK_DGRAM: UDP(unreliable, connectionless)
-
-    // Protocol value for Internet Protocol(IP), which is 0
+	int received = 0;
 
 	socket_desc = socket(AF_INET, SOCK_STREAM , 0);
 
@@ -43,28 +83,24 @@ int main(int argc , char *argv[]) {
 	}
 
 	puts("Socket created");
-	
-	//Prepare the sockaddr_in structure
 
 	server.sin_family = AF_INET;
 
 	server.sin_addr.s_addr = INADDR_ANY;
 
 	server.sin_port = htons(3000);
-	
-	//Bind the socket to the address and port number specified
 
-	if(bind(socket_desc, (struct sockaddr *) &server , sizeof(server)) < 0){
+	if(bind(socket_desc, (struct sockaddr *) &server, sizeof(server)) < 0){
 
 		//print the error message
 
-		perror("bind failed. Error");
+		perror("Bind failed. Error");
 
 		return 1;
 
 	}
 
-	puts("bind done");
+	puts("Bind done");
 	
 	//Listen
 
@@ -82,7 +118,7 @@ int main(int argc , char *argv[]) {
 
 	if(client_sock < 0){
 
-		perror("accept failed");
+		perror("Accept failed");
 
 		return 1;
 
@@ -106,11 +142,14 @@ int main(int argc , char *argv[]) {
 
             send(client_sock, client_message, strlen(client_message), 0);
 
-        } else{
+        } 
+		
+		else{
 
             puts("recv failed");
 
         }
+		
     }
 
 	return 0;
