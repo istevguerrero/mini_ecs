@@ -16,15 +16,21 @@ corren en el host interactuan con el proceso subscribe_host.
 
 int listContainers(){
 
-	int list;
+	/*
+	
+	Todo esto de hace para enviar el mensaje de listar contenedores al host1 por el localhost usando el puerto 3001
+
+	*/
+
+	int sock;
 
 	struct sockaddr_in server;
 
-	char petition[20], reply[50];
+	char message[20], server_reply[50];
 
-	list = socket(AF_INET, SOCK_STREAM, 0);
+	sock = socket(AF_INET, SOCK_STREAM, 0);
 
-	if(list == -1){
+	if(sock == -1){
 
 		printf("Could not create socket");
 
@@ -38,7 +44,7 @@ int listContainers(){
 
 	server.sin_port = htons(3001);
 
-	if(connect(list, (struct sockaddr *)&server, sizeof(server)) < 0){
+	if(connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0){
 
 		perror("Connect failed. Error");
 
@@ -47,24 +53,27 @@ int listContainers(){
 
 	puts("Connected");
 
-	memset(petition, 0, 20);
+	memset(message, 0, 20);
 
-	strcpy(petition, "list");
+    strcpy(message, "host1 3001");
 
-	send(list, petition, strlen(petition), 0);
+    send(sock, message, strlen(message), 0);
 
-	memset(reply, 0, 50);
+	printf("Response: %s\n", message);
 
-	recv(list, reply, 50, 0);
-
-	printf("Response: %s\n", reply);
-
-	close(list);
+	close(sock);
 
 }
 
 
+
 int main(int argc , char *argv[]) {
+
+	/*
+	
+	Creacion del Socket de Conexion
+
+	*/
 	
 	int socket_desc, client_sock, c, read_size;
 
@@ -86,13 +95,17 @@ int main(int argc , char *argv[]) {
 
 	server.sin_family = AF_INET;
 
-	server.sin_addr.s_addr = INADDR_ANY;
+	server.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	server.sin_port = htons(3000);
 
-	if(bind(socket_desc, (struct sockaddr *) &server, sizeof(server)) < 0){
+	/* 
+	
+	Creacion del Bind  del Socket Servidor
 
-		//print the error message
+	*/
+
+	if(bind(socket_desc, (struct sockaddr *) &server, sizeof(server)) < 0){
 
 		perror("Bind failed. Error");
 
@@ -102,17 +115,23 @@ int main(int argc , char *argv[]) {
 
 	puts("Bind done");
 	
-	//Listen
+	/* 
+	
+	Apertura del Socket de Servidor
+
+	*/
 
 	listen(socket_desc, 3);
-	
-	//Accept and incoming connection
 
 	puts("Waiting for incoming connections...");
 
 	c = sizeof(struct sockaddr_in);
 	
-	//accept connection from an incoming client
+	/*
+
+	Aceptacion de conexion desde un Socket Cliente 
+
+	*/
 
 	client_sock = accept(socket_desc, (struct sockaddr *) &client, (socklen_t*) &c);
 
@@ -125,6 +144,12 @@ int main(int argc , char *argv[]) {
 	}
 
 	puts("Connection accepted");
+
+	/*
+
+	Bucle para recibir mensajes hasta que received = 1
+
+	*/
 	
     while(!received){
 
@@ -151,6 +176,14 @@ int main(int argc , char *argv[]) {
         }
 		
     }
+
+	/*
+	
+	Todo lo de arriba se hace para recibir el mensaje desde el ecs_client
+	
+	*/
+
+	listContainers();
 
 	return 0;
 }

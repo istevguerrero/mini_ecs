@@ -3,16 +3,16 @@ CC=gcc
 %.o: %.c
 	$(CC) -c -o $@ $<
 
-all: admin_container ecs_agent_1 ecs_agent_2
+all: elastic_container_service host_1 host_2
 
-admin_container: admin_container.o
-	gcc -o admin_container admin_container.o
+elastic_container_service: elastic_container_service.o
+	gcc -o elastic_container_service elastic_container_service.o && ./elastic_container_service
 
-ecs_agent_1: ecs-agent_1.o
-	gcc -o ecs_agent_1 ecs_agent_1.o
+host_1: host_1.o
+	gcc -o host_1 host_1.o && ./host_1
 
-ecs_agent_2: ecs_agent_2.o
-	gcc -o ecs_agent_2 ecs_agent_2.o
+host_2: host_2.o
+	gcc -o host_2 host_2.o && ./host_2
 	
 clean:
 	rm -f *.o
